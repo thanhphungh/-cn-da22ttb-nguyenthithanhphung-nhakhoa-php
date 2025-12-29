@@ -1,0 +1,198 @@
+/* Reset và font chung */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f4f6f9;
+  color: #333;
+}
+
+/* Header */
+header {
+  background: #0066cc;
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+header .logo {
+  font-size: 20px;
+  font-weight: bold;
+}
+header h1 {
+  margin: 0;
+}
+
+/* Logout button */
+.logout {
+  background: #ff3333;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  text-decoration: none;
+}
+.logout:hover {
+  background: #c0392b;
+}
+
+/* Navigation */
+nav {
+  background: #333;
+  padding: 10px 20px;
+  text-align: center;
+}
+nav a {
+  color: #fff;
+  margin: 0 15px;
+  text-decoration: none;
+  font-weight: bold;
+}
+nav a:hover {
+  text-decoration: underline;
+}
+
+/* Container */
+.container {
+  padding: 20px;
+}
+
+/* Card box */
+.card, .box {
+  background: #fff;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  margin-bottom: 30px;
+}
+.card h2, .box h2 {
+  margin-top: 0;
+  color: #0066cc;
+  font-size: 22px;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 5px;
+}
+
+/* Highlight doanh thu */
+.highlight {
+  font-size: 32px;
+  font-weight: bold;
+  color: #28a745;
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* Table */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+table th, table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+table th {
+  background: #0066cc;
+  color: #fff;
+}
+table tr:nth-child(even) {
+  background: #f9f9f9;
+}
+table tr:hover {
+  background: #e6f2ff;
+}
+
+/* Toast thông báo */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  opacity: 0;
+  transition: opacity 0.5s, transform 0.5s;
+  transform: translateY(20px);
+  z-index: 9999;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+.toast.error {
+  background: #f44336;
+}
+.toast.warning {
+  background: #ff9800;
+}
+
+/* Banner */
+.banner {
+  background: url('banner.jpg') no-repeat center center/cover;
+  color: white;
+  text-align: center;
+  padding: 80px 20px;
+}
+.banner h1 {
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+.banner .btn {
+  background: #ffcc00;
+  color: #333;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 4px;
+}
+.banner .btn:hover {
+  background: #ff9900;
+}
+
+/* Intro section */
+.intro {
+  padding: 40px 20px;
+  text-align: center;
+}
+.intro h2 {
+  color: #0066cc;
+}
+.intro .link {
+  display: inline-block;
+  margin-top: 10px;
+  color: #0066cc;
+  text-decoration: none;
+}
+.intro .link:hover {
+  text-decoration: underline;
+}
+
+/* Footer */
+footer {
+  background: #333;
+  color: white;
+  text-align: center;
+  padding: 15px;
+  margin-top: 30px;
+}
+canvas {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 20px auto;
+}
+
+.chart-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+/* Active menu item */
+nav a.active {
+  background-color: #0066cc;
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 4px;
+}
