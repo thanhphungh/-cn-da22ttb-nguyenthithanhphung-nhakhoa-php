@@ -1,13 +1,5 @@
 <?php
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit;
-}
-if (!in_array($_SESSION['role'], ['user','patient','admin'])) {
-    echo "Bạn không có quyền truy cập trang này.";
-    exit;
-}
 
 // Kết nối CSDL
 $pdo = new PDO('mysql:host=localhost;dbname=phongnha_db;charset=utf8mb4', 'root', '');
@@ -16,6 +8,13 @@ $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 // Lấy danh sách bác sĩ từ bảng doctors
 $stmt = $pdo->query("SELECT id, name, specialty, email, avatar FROM doctors ORDER BY created_at DESC");
 $doctors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Kiểm tra trạng thái đăng nhập
+$isLoggedIn = isset($_SESSION['user_id']);
+$role       = $_SESSION['role'] ?? null;
+$name       = $_SESSION['name'] ?? null;
+$avatar     = $_SESSION['avatar'] ?? 'default-user.png';
+$loginType  = $_SESSION['login_type'] ?? null;
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -72,6 +71,7 @@ $doctors = $stmt->fetchAll(PDO::FETCH_ASSOC);
       height: 32px;
       border-radius: 50%;
       border: 2px solid white;
+      object-fit: cover;
     }
     .dropdown {
       display: none;
@@ -108,26 +108,48 @@ $doctors = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <nav>
     <a href="index.php">Trang chủ</a>
     <a href="about.php">Giới thiệu</a>
-    <a href="dichvu.php" class="active">Dịch vụ</a>
+    <a href="dichvu.php">Dịch vụ</a>
     <a href="booking.php">Đặt lịch khám</a>
     <a href="lookup.php">Tra cứu lịch hẹn</a>
-    <a href="doctors.php">Bác sĩ</a>
+    <a href="doctors.php" class="active">Bác sĩ</a>
     <a href="contact.php">Liên hệ</a>
   </nav>
+
+  <?php if ($isLoggedIn): ?>
+  <?php
+    // Xử lý avatar hiển thị
+    $avatarSrc = 'uploads/default-user.png'; // mặc định
+    if ($loginType === 'google' && !empty($avatar)) {
+        $avatarSrc = $avatar; // link ảnh từ Google
+    } elseif (!empty($avatar) && file_exists('uploads/' . $avatar)) {
+        $avatarSrc = 'uploads/' . $avatar; // ảnh nội bộ
+    }
+  ?>
   <div class="user-icon">
-    <img src="uploads/<?php echo $_SESSION['avatar'] ?? 'default-user.png'; ?>" alt="User" />
-    <span><?php echo htmlspecialchars($_SESSION['name']); ?></span>
+    <img src="<?= htmlspecialchars($avatarSrc) ?>" alt="User" />
+    <span><?= htmlspecialchars($name) ?></span>
     <div class="dropdown">
       <ul>
         <li><a href="profile.php">Hồ sơ cá nhân</a></li>
-        <?php if ($_SESSION['role'] === 'admin'): ?>
+        <?php if ($role === 'admin'): ?>
           <li><a href="dashboard.php">Trang quản trị</a></li>
         <?php endif; ?>
         <li><a href="logout.php">Đăng xuất</a></li>
       </ul>
     </div>
   </div>
+<?php else: ?>
+  <div>
+    <a href="login.php" class="btn" style="background:#dc3545;color:#fff;padding:10px 20px;border-radius:5px;text-decoration:none;display:inline-block;">
+      Đăng nhập
+    </a>
+    <a href="register.php" class="btn" style="background:#dc3545;color:#fff;padding:10px 20px;border-radius:5px;text-decoration:none;display:inline-block;">
+      Đăng ký
+    </a>
+  </div>
+<?php endif; ?>
 </header>
+
 <section class="doctors">
   <h2 style="width:100%; text-align:center; margin-bottom:20px;">Đội ngũ bác sĩ</h2>
   <?php if (empty($doctors)): ?>

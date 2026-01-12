@@ -1,6 +1,10 @@
 <?php
 session_start();
+
+// Xóa toàn bộ session
 session_unset();
 session_destroy();
-header('Location: login.php');
+
+// Chuyển hướng về trang chủ
+header("Location: index.php");
 exit;

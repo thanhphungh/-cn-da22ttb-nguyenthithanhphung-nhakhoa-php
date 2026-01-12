@@ -18,8 +18,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($user && md5($password) === $user['password']) {
         // Lưu thông tin vào session
         $_SESSION['user_id'] = $user['id'];
-        $_SESSION['role']    = $user['role'];
         $_SESSION['name']    = $user['name'];
+        $_SESSION['email']   = $user['email'];
+
+        // Nếu có avatar trong DB thì dùng, ngược lại dùng ảnh mặc định trong uploads
+        $_SESSION['avatar']  = !empty($user['avatar']) 
+                               ? 'uploads/' . $user['avatar'] 
+                               : 'uploads/avatar.jpg';
+
+        $_SESSION['role']    = $user['role'];
+        $_SESSION['login_type'] = 'local'; // đánh dấu là đăng nhập thường
 
         // Phân quyền chuyển hướng
         if ($user['role'] === 'patient' || $user['role'] === 'user') {
@@ -29,6 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         exit;
     } else {
+        // Chỉ khi sai mới gán thông báo lỗi
         $error = "Sai tên đăng nhập hoặc mật khẩu!";
     }
 }
@@ -92,10 +101,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   <div class="login-box">
   <h2>Đăng nhập hệ thống</h2>
   <form method="post">
-    <input type="text" name="name" placeholder="Tên đăng nhập" required>
-    <input type="password" name="password" placeholder="Mật khẩu" required>
-    <button type="submit">Đăng nhập</button>
-  </form>
+  <input type="text" name="name" placeholder="Tên đăng nhập" required>
+  <input type="password" name="password" placeholder="Mật khẩu" required>
+  <button type="submit">Đăng nhập</button>
+</form>
+
+<!-- Nút đăng nhập bằng Google -->
+<div style="margin-top:15px;">
+  <a href="login_with_google.php" 
+     style="display:inline-block;padding:10px 20px;background:#db4437;color:#fff;border-radius:6px;text-decoration:none;">
+     Đăng nhập bằng Google
+  </a>
+</div>
   <?php if (!empty($error)) echo "<p class='error'>$error</p>"; ?>
 
   <!-- Đường dẫn sang trang đăng ký -->

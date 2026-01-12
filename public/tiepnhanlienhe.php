@@ -64,11 +64,11 @@ $contacts = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <a href="appointments.php">Lịch hẹn</a>
   <a href="patients.php">Bệnh nhân</a>
   <a href="posts.php">Bài đăng</a>
+  <a href="invoice.php">Hóa đơn</a>
   <a href="revenue.php">Doanh thu</a>
   <a href="quanlybacsi.php">Quản lí bác sĩ</a>
-  <a href="tiepnhanlienhe.php">Tiếp nhận liên hệ</a>
-  <a href="invoice.php">Hóa đơn</a>
-  <a href="contacts.php" class="active">Liên hệ</a>
+  <a href="tiepnhanlienhe.php" class="active">Tiếp nhận liên hệ</a>
+  <a href="index.php">Trang khách hàng</a>
 </nav>
 
 <div class="container">

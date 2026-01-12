@@ -186,19 +186,39 @@ footer {
     <a href="doctors.php">Bác sĩ</a>
     <a href="contact.php">Liên hệ</a>
   </nav>
+  <?php if (isset($_SESSION['user_id'])): ?>
+  <?php
+    // Xử lý avatar hiển thị
+    $avatarSrc = 'uploads/default-user.png'; // mặc định
+    if (($_SESSION['login_type'] ?? '') === 'google' && !empty($_SESSION['avatar'])) {
+        $avatarSrc = $_SESSION['avatar']; // link ảnh từ Google
+    } elseif (!empty($_SESSION['avatar']) && file_exists('uploads/' . $_SESSION['avatar'])) {
+        $avatarSrc = 'uploads/' . $_SESSION['avatar']; // ảnh nội bộ
+    }
+  ?>
   <div class="user-icon">
-    <img src="uploads/<?php echo $_SESSION['avatar'] ?? 'default-user.png'; ?>" alt="User" />
-    <span><?php echo htmlspecialchars($_SESSION['name']); ?></span>
+    <img src="<?= htmlspecialchars($avatarSrc) ?>" alt="User" />
+    <span><?= htmlspecialchars($_SESSION['name'] ?? '') ?></span>
     <div class="dropdown">
       <ul>
         <li><a href="profile.php">Hồ sơ cá nhân</a></li>
-        <?php if ($_SESSION['role'] === 'admin'): ?>
+        <?php if (!empty($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
           <li><a href="dashboard.php">Trang quản trị</a></li>
         <?php endif; ?>
         <li><a href="logout.php">Đăng xuất</a></li>
       </ul>
     </div>
   </div>
+<?php else: ?>
+  <div>
+    <a href="login.php" class="btn" style="background:#dc3545;color:#fff;padding:10px 20px;border-radius:5px;text-decoration:none;display:inline-block;">
+      Đăng nhập
+    </a>
+    <a href="register.php" class="btn" style="background:#dc3545;color:#fff;padding:10px 20px;border-radius:5px;text-decoration:none;display:inline-block;">
+      Đăng ký
+    </a>
+  </div>
+<?php endif; ?>
 </header>
 <div class="contact-box">
   <h2>Liên hệ với chúng tôi</h2>

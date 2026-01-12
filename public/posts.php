@@ -75,17 +75,16 @@ $posts = $pdo->query("SELECT * FROM posts ORDER BY created_at DESC")->fetchAll(P
 </header>
 <nav>
   <a href="users.php">Người dùng</a>
-    <a href="services.php">Dịch vụ</a>
-    <a href="appointments.php">Lịch hẹn</a>
-    <a href="patients.php">Quản lí bệnh nhân</a>
-    <a href="posts.php">Quản lí bài đăng</a>
-    <a href="invoice.php">Hóa đơn</a>
-    <a href="revenue.php">Doanh thu</a>
-    <a href="quanlybacsi.php">Quản lí bác sĩ</a>
-    <a href="tiepnhanlienhe.php">Tiếp nhận liên hệ</a>
-    <a href="index.php">Trang khách hàng</a>
+  <a href="services.php">Dịch vụ</a>
+  <a href="appointments.php">Lịch hẹn</a>
+  <a href="patients.php">Quản lí bệnh khách hàng</a>
+  <a href="posts.php" class="active">Quản lí bài đăng</a>
+  <a href="invoice.php">Hóa đơn</a>
+  <a href="revenue.php">Doanh thu</a>
+  <a href="quanlybacsi.php">Quản lí bác sĩ</a>
+  <a href="tiepnhanlienhe.php">Tiếp nhận liên hệ</a>
+  <a href="index.php">Trang khách hàng</a>
 </nav>
-
 <div class="container">
   <div class="card">
     <h2>Thêm bài viết mới</h2>

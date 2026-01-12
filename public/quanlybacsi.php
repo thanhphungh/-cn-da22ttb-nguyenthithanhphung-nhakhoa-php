@@ -70,32 +70,13 @@ $doctors = $pdo->query("SELECT * FROM doctors ORDER BY name ASC")->fetchAll(PDO:
   <title>Quản lý bác sĩ</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    body { margin:0; padding:0; background:#f5f5f5; font-family:sans-serif; }
-    header {
-      background: #007BFF;
-      color: white;
-      padding: 12px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    header .logout {
-      background: #dc3545;
-      color: white;
-      padding: 8px 12px;
-      border-radius: 6px;
-      text-decoration: none;
-    }
-    nav {
-      background: #333;
-      padding: 10px 20px;
-    }
-    nav a {
-      color: white;
-      margin-right: 15px;
-      text-decoration: none;
-      font-weight: 500;
-    }
+   body { font-family: 'Segoe UI', sans-serif; background: #f4f6f9; margin: 0; padding: 0; }
+    header { background: #0066cc; color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+    header h1 { margin: 0; }
+    .logout { background: #ff3333; color: #fff; padding: 6px 12px; border-radius: 4px; text-decoration: none; }
+    .logout:hover { background: #c0392b; }
+    nav { background: #333; padding: 10px 20px; text-align: center; }
+    nav a { color: #fff; margin: 0 15px; text-decoration: none; font-weight: bold; }
     nav a.active { text-decoration: underline; }
     nav a:hover { color: #ffc107; }
     .container { max-width: 1100px; margin: 20px auto; }
@@ -131,11 +112,10 @@ $doctors = $pdo->query("SELECT * FROM doctors ORDER BY name ASC")->fetchAll(PDO:
   <a href="appointments.php">Lịch hẹn</a>
   <a href="patients.php">Quản lí khách hàng</a>
   <a href="posts.php">Quản lí bài đăng</a>
-  <a href="revenue.php">Doanh thu</a>
   <a href="invoice.php">Hóa đơn</a>
-  <a href="quanlybacsi.php">Quản lí bác sĩ</a>
+  <a href="revenue.php">Doanh thu</a>
+  <a href="quanlybacsi.php" class="active">Quản lí bác sĩ</a>
   <a href="tiepnhanlienhe.php">Tiếp nhận liên hệ</a>
-  <a href="doctors.php" class="active">Bác sĩ</a>
   <a href="index.php">Trang khách hàng</a>
 </nav>
 

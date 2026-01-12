@@ -1,13 +1,5 @@
 <?php
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit;
-}
-if (!in_array($_SESSION['role'], ['patient','admin'])) {
-    echo "Bạn không có quyền truy cập trang này.";
-    exit;
-}
 
 // Kết nối CSDL
 $pdo = new PDO('mysql:host=localhost;dbname=phongnha_db;charset=utf8mb4', 'root', '');
@@ -16,6 +8,13 @@ $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 // Lấy danh sách dịch vụ
 $stmt = $pdo->query("SELECT * FROM services ORDER BY created_at DESC");
 $services = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Kiểm tra trạng thái đăng nhập
+$isLoggedIn = isset($_SESSION['user_id']);
+$role       = $_SESSION['role'] ?? null;
+$name       = $_SESSION['name'] ?? null;
+$avatar     = $_SESSION['avatar'] ?? 'default-user.png';
+$loginType  = $_SESSION['login_type'] ?? null;
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -53,6 +52,7 @@ $services = $stmt->fetchAll(PDO::FETCH_ASSOC);
       height: 32px;
       border-radius: 50%;
       border: 2px solid white;
+      object-fit: cover;
     }
     .dropdown {
       display: none;
@@ -84,7 +84,6 @@ $services = $stmt->fetchAll(PDO::FETCH_ASSOC);
     .service p { font-size: 14px; color: #555; }
     .price { font-weight: bold; color: #4CAF50; margin-top: 10px; }
 
-
     footer {
       text-align: center;
       padding: 15px;
@@ -105,32 +104,62 @@ $services = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <a href="doctors.php">Bác sĩ</a>
     <a href="contact.php">Liên hệ</a>
   </nav>
-  <div class="user-icon">
-    <img src="uploads/<?php echo $_SESSION['avatar'] ?? 'default-user.png'; ?>" alt="User" />
-    <span><?php echo htmlspecialchars($_SESSION['name']); ?></span>
-    <div class="dropdown">
-      <ul>
-        <li><a href="profile.php">Hồ sơ cá nhân</a></li>
-        <?php if ($_SESSION['role'] === 'admin'): ?>
-          <li><a href="dashboard.php">Trang quản trị</a></li>
-        <?php endif; ?>
-        <li><a href="logout.php">Đăng xuất</a></li>
-      </ul>
+
+  <?php if ($isLoggedIn): ?>
+    <div class="user-icon">
+      <?php
+  $avatarSrc = 'uploads/default-user.png'; // mặc định
+
+  if ($isLoggedIn) {
+    if (($_SESSION['login_type'] ?? '') === 'google') {
+      $avatarSrc = $_SESSION['avatar']; // link ảnh từ Google
+    } elseif (!empty($_SESSION['avatar']) && file_exists('uploads/' . $_SESSION['avatar'])) {
+      $avatarSrc = 'uploads/' . $_SESSION['avatar']; // ảnh nội bộ
+    }
+  }
+?>
+<img src="<?= htmlspecialchars($avatarSrc) ?>" alt="User" />
+
+      <span><?= htmlspecialchars($name) ?></span>
+      <div class="dropdown">
+        <ul>
+          <li><a href="profile.php">Hồ sơ cá nhân</a></li>
+          <?php if ($role === 'admin'): ?>
+            <li><a href="dashboard.php">Trang quản trị</a></li>
+          <?php endif; ?>
+          <li><a href="logout.php">Đăng xuất</a></li>
+        </ul>
+      </div>
     </div>
-  </div>
+  <?php else: ?>
+    <div>
+      <a href="login.php" class="btn" style="background:#dc3545;color:#fff;padding:10px 20px;border-radius:5px;text-decoration:none;display:inline-block;">
+        Đăng nhập
+      </a>
+      <a href="register.php" class="btn" style="background:#dc3545;color:#fff;padding:10px 20px;border-radius:5px;text-decoration:none;display:inline-block;">
+        Đăng ký
+      </a>
+    </div>
+  <?php endif; ?>
 </header>
 
 <section class="services">
   <?php foreach ($services as $service): ?>
     <div class="service">
-      <a href="booking.php?service_id=<?= $service['id'] ?>" style="text-decoration:none; color:inherit;">
-        <?php if (!empty($service['image'])): ?>
-          <img src="<?= htmlspecialchars($service['image']) ?>" alt="<?= htmlspecialchars($service['name']) ?>">
-        <?php endif; ?>
-        <h3><?= htmlspecialchars($service['name']) ?></h3>
-        <p><?= nl2br(htmlspecialchars($service['description'])) ?></p>
-        <div class="price"><?= number_format($service['price'], 0, ',', '.') ?> VND</div>
-      </a>
+      <?php if ($isLoggedIn): ?>
+        <!-- Nếu đã đăng nhập thì cho đặt lịch -->
+        <a href="booking.php?service_id=<?= $service['id'] ?>" style="text-decoration:none; color:inherit;">
+      <?php else: ?>
+        <!-- Nếu chưa đăng nhập thì chuyển tới login -->
+        <a href="login.php" style="text-decoration:none; color:inherit;" onclick="alert('Vui lòng đăng nhập để đặt lịch!');">
+      <?php endif; ?>
+          <?php if (!empty($service['image'])): ?>
+            <img src="<?= htmlspecialchars($service['image']) ?>" alt="<?= htmlspecialchars($service['name']) ?>">
+          <?php endif; ?>
+          <h3><?= htmlspecialchars($service['name']) ?></h3>
+          <p><?= nl2br(htmlspecialchars($service['description'])) ?></p>
+          <div class="price"><?= number_format($service['price'], 0, ',', '.') ?> VND</div>
+        </a>
     </div>
   <?php endforeach; ?>
 </section>

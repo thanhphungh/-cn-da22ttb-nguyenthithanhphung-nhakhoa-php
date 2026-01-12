@@ -168,22 +168,23 @@ $weeklyRevenue = $weeklyStmt->fetchAll(PDO::FETCH_ASSOC);
 </div>
 
 <script>
-// Biểu đồ theo ngày trong tuần
+/// Biểu đồ theo ngày trong tuần (line chart giống tháng)
 const weeklyDaysLabels = <?= json_encode(array_map(function($r){ 
-  return date('D d/m', strtotime($r['ngay'])); 
+  return date('d/m', strtotime($r['ngay'])); 
 }, $weeklyDaysRevenue)) ?>;
 const weeklyDaysData   = <?= json_encode(array_map('intval', array_column($weeklyDaysRevenue, 'doanh_thu'))) ?>;
 
 new Chart(document.getElementById('weeklyDaysChart'), {
-  type: 'bar',
+  type: 'line',
   data: {
     labels: weeklyDaysLabels,
     datasets: [{
-      label: 'Doanh thu từng ngày trong tuần (VND)',
+      label: 'Doanh thu theo ngày (VND)',
       data: weeklyDaysData,
-      backgroundColor: 'rgba(0, 123, 255, 0.6)',
       borderColor: 'rgba(0, 123, 255, 1)',
-      borderWidth: 1
+      backgroundColor: 'rgba(0, 123, 255, 0.2)',
+      fill: true,
+      tension: 0.3
     }]
   },
   options: {

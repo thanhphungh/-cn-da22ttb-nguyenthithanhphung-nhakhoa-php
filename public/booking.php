@@ -183,19 +183,29 @@ if (isset($_GET['service_id'])) {
     <a href="doctors.php">Bác sĩ</a>
     <a href="contact.php">Liên hệ</a>
   </nav>
-  <div class="user-icon">
-    <img src="uploads/<?php echo $_SESSION['avatar'] ?? 'default-user.png'; ?>" alt="User" />
-    <span><?php echo htmlspecialchars($_SESSION['name']); ?></span>
-    <div class="dropdown">
-      <ul>
-        <li><a href="profile.php">Hồ sơ cá nhân</a></li>
-        <?php if ($_SESSION['role'] === 'admin'): ?>
-          <li><a href="dashboard.php">Trang quản trị</a></li>
-        <?php endif; ?>
-        <li><a href="logout.php">Đăng xuất</a></li>
-      </ul>
-    </div>
+  <?php
+  // Xử lý avatar hiển thị
+  $avatarSrc = 'uploads/default-user.png'; // mặc định
+  if (isset($_SESSION['login_type']) && $_SESSION['login_type'] === 'google') {
+      $avatarSrc = $_SESSION['avatar']; // link ảnh từ Google
+  } elseif (!empty($_SESSION['avatar']) && file_exists('uploads/' . $_SESSION['avatar'])) {
+      $avatarSrc = 'uploads/' . $_SESSION['avatar']; // ảnh nội bộ
+  }
+?>
+<div class="user-icon">
+  <img src="<?= htmlspecialchars($avatarSrc) ?>" alt="User" />
+  <span><?= htmlspecialchars($_SESSION['name'] ?? '') ?></span>
+  <div class="dropdown">
+    <ul>
+      <li><a href="profile.php">Hồ sơ cá nhân</a></li>
+      <?php if (!empty($_SESSION['role']) && $_SESSION['role'] === 'admin'): ?>
+        <li><a href="dashboard.php">Trang quản trị</a></li>
+      <?php endif; ?>
+      <li><a href="logout.php">Đăng xuất</a></li>
+    </ul>
   </div>
+</div>
+
 </header>
 <div class="form-box">
   <h2>Đặt lịch khám</h2>

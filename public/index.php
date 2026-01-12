@@ -1,128 +1,25 @@
 <?php
 session_start();
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
-    exit;
-}
-if (!in_array($_SESSION['role'], ['user','patient','admin'])) {
-    echo "Bạn không có quyền truy cập trang này.";
-    exit;
-}
 
 $pdo = new PDO('mysql:host=localhost;dbname=phongnha_db;charset=utf8mb4', 'root', '');
 $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 $stmt = $pdo->query("SELECT * FROM posts ORDER BY created_at DESC");
 $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Kiểm tra trạng thái đăng nhập
+$isLoggedIn = isset($_SESSION['user_id']);
+$role       = $_SESSION['role'] ?? null;
+$name       = $_SESSION['name'] ?? null;
+$avatar     = $_SESSION['avatar'] ?? 'default-user.png';
 ?>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
   <title>Trang chủ - Phòng khám ABC</title>
   <link rel="stylesheet" href="style_client.css">
-  <style>
-    body { margin: 0; font-family: Arial, sans-serif; background: #f5f5f5; }
-    header {
-      background: #007BFF;
-      color: white;
-      padding: 10px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .logo { font-size: 20px; font-weight: bold; }
-    nav a {
-      color: white;
-      margin: 0 10px;
-      text-decoration: none;
-      font-weight: 500;
-    }
-    nav a:hover { text-decoration: underline; }
-    .user-icon {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      position: relative;
-      cursor: pointer;
-    }
-    .user-icon img {
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      border: 2px solid white;
-    }
-    .dropdown {
-      display: none;
-      position: absolute;
-      right: 0;
-      top: 40px;
-      background: #fff;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      min-width: 150px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-      z-index: 10;
-    }
-    .dropdown ul { list-style: none; margin: 0; padding: 0; }
-    .dropdown li { padding: 10px; }
-    .dropdown li a {
-      text-decoration: none;
-      color: #333;
-      display: block;
-    }
-    .dropdown li a:hover { background: #f0f0f0; }
-    .user-icon:hover .dropdown { display: block; }
-
-    .banner {
-      text-align: center;
-      padding: 50px 20px;
-      background: #eafbea;
-    }
-    .banner h1 {
-      font-size: 28px;
-      margin-bottom: 20px;
-    }
-    .banner .btn {
-      background: #007BFF;
-      color: white;
-      padding: 12px 20px;
-      border-radius: 6px;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    .banner .btn:hover { background: #0056b3; }
-
-    .posts {
-      width: 80%;
-      margin: 30px auto;
-    }
-    .post {
-      background: #fff;
-      padding: 20px;
-      margin-bottom: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    .post h2 { margin: 0; color: #333; }
-    .post .date {
-      font-size: 12px;
-      color: gray;
-      margin-bottom: 10px;
-    }
-    .post img {
-      max-width: 100%;
-      border-radius: 6px;
-      margin-top: 10px;
-    }
-
-    footer {
-      text-align: center;
-      padding: 15px;
-      background: #f0f0f0;
-      margin-top: 30px;
-    }
-  </style>
 </head>
 <body>
 <header>
@@ -136,21 +33,43 @@ $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <a href="doctors.php">Bác sĩ</a>
     <a href="contact.php">Liên hệ</a>
   </nav>
+
+  <?php if ($isLoggedIn): ?>
   <div class="user-icon">
-    <img src="uploads/<?php echo $_SESSION['avatar'] ?? 'default-user.png'; ?>" alt="User" />
-    <span><?php echo htmlspecialchars($_SESSION['name']); ?></span>
+    <?php
+  $avatarSrc = 'uploads/default-user.png'; // mặc định
+
+  if ($isLoggedIn) {
+    if (($_SESSION['login_type'] ?? '') === 'google') {
+      $avatarSrc = $_SESSION['avatar']; // link ảnh từ Google
+    } elseif (!empty($_SESSION['avatar']) && file_exists('uploads/' . $_SESSION['avatar'])) {
+      $avatarSrc = 'uploads/' . $_SESSION['avatar']; // ảnh nội bộ
+    }
+  }
+?>
+<img src="<?= htmlspecialchars($avatarSrc) ?>" alt="User" />
+    <span><?= htmlspecialchars($name) ?></span>
     <div class="dropdown">
       <ul>
         <li><a href="profile.php">Hồ sơ cá nhân</a></li>
-        <?php if ($_SESSION['role'] === 'admin'): ?>
+        <?php if ($role === 'admin'): ?>
           <li><a href="dashboard.php">Trang quản trị</a></li>
         <?php endif; ?>
         <li><a href="logout.php">Đăng xuất</a></li>
       </ul>
     </div>
   </div>
+<?php else: ?>
+  <div>
+    <a href="login.php" class="btn" style="background:#dc3545;color:#fff;padding:10px 20px;border-radius:5px;text-decoration:none;display:inline-block;">
+      Đăng nhập
+    </a>
+    <a href="register.php" class="btn" style="background:#dc3545;color:#fff;padding:10px 20px;border-radius:5px;text-decoration:none;display:inline-block;">
+      Đăng ký
+    </a>
+  </div>
+<?php endif; ?>
 </header>
-
 <section class="banner">
   <h1>Chăm sóc sức khỏe tận tâm – Vì bạn và gia đình</h1>
   <a href="booking.php" class="btn">Đặt lịch ngay</a>
